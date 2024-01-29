@@ -2,14 +2,14 @@ CREATE OR REPLACE PROCEDURE `daas-cdw-dev.mdm.sp_cu_dim_person`(institution_name
 BEGIN
 	declare institution string default 'CU';
 	declare institution_id int64 default 2;
-	declare dml_mode string default 'scd2';
+	declare dml_mode string default 'scd2';	
 	declare target_dataset string default 'mdm';
 	declare target_tablename string default 't_dim_person';
-	declare trans_tablename string default 'trans_cu_dim_person';
+	declare trans_tablename string default 'trans_cu_dim_person';	
 	declare load_source string default 'mdm.sp_cu_dim_person';
 	declare sk_column_name string default 'person_key';
-	declare additional_attributes ARRAY<struct<keyword string, value string>>;
-
+	declare additional_attributes ARRAY<struct<keyword string, value string>>; 
+	
 
 	/* common across */
 	declare trans_datasetname string default null;
@@ -18,7 +18,7 @@ BEGIN
 	declare job_end_dt timestamp default current_timestamp();
 	declare job_completed_ind string default null;
 	declare job_type string default 'ODS';
-	declare load_method string default 'scheduled query';
+	declare load_method string default 'scheduled query';	
 	declare out_sql string;
 	/* end common across */
 
@@ -28,10 +28,10 @@ BEGIN
 /* Begin of source logic */
 BEGIN  -- Need this extra begin for exception section read the above variables
 
-CREATE TEMP TABLE trans_cu_dim_person CLUSTER BY etl_pk_hash, etl_chg_hash
-AS (
+CREATE TEMP TABLE trans_cu_dim_person CLUSTER BY etl_pk_hash, etl_chg_hash 
+AS ( 
 WITH SRC AS (
-	SELECT	DISTINCT
+	SELECT	DISTINCT 
 		'CU' AS INSTITUTION,
 		SPRIDEN_PIDM AS PERSON_UID,
 		CAST(SPRIDEN_ID AS STRING) AS DSI,
@@ -149,7 +149,7 @@ WITH SRC AS (
 				ELSE 'Race/Ethnicity Unknown'
 			END AS RACE_ETHNICITY,
 			R.GZRROLE_ROLE AS ROLE,
-			MIN_SPRIDEN_CREATE_DATE as MIN_SPRIDEN_CREATE_DATE,
+			MIN_SPRIDEN_CREATE_DATE as MIN_SPRIDEN_CREATE_DATE, 
 		'CU_BNR'  AS SOURCE_SYSTEM_NAME,
 		 row_number() over (partition by spriden_pidm order by spriden_version desc) rnk
 		FROM
@@ -217,7 +217,7 @@ WITH SRC AS (
 				raw_cu_bnr.gorsdav g
 			WHERE
 				g.gorsdav_table_name = 'GOBINTL'
-				AND g.gorsdav_attr_name IN ('PASSPORT_ISSUE_DATE','PASSPORT_ISSUE_LOCATION') )PASSPORT
+				AND g.gorsdav_attr_name IN ('PASSPORT_ISSUE_DATE','PASSPORT_ISSUE_LOCATION') )PASSPORT 
       ON
 			(CAST(GOBINTL_PIDM AS STRING) = PASSPORT.gorsdav_pk_parenttab )
 		LEFT JOIN raw_cu_bnr.stvnatn STVNATN_NB ON
@@ -307,39 +307,25 @@ WITH SRC AS (
 			( STVLGCY_CODE = SPBPERS_LGCY_CODE)
 		LEFT JOIN raw_cu_bnr.stvvtyp STVVTYP ON
 			( STVVTYP_CODE = GORVISA_VTYP_CODE)
-		LEFT JOIN raw_cu_bnr.stvetct STVETCT ON
+		LEFT JOIN raw_cu_bnr.stvetct STVETCT ONcu
 			( STVETCT_CODE = STVETHN_ETCT_CODE)
 		LEFT JOIN raw_cu_bnr.stvcitz ON
 			( STVCITZ_CODE = SPBPERS_CITZ_CODE )
 		LEFT JOIN raw_cu_bnr.sprmedi ON
 			( SPRMEDI_PIDM = SPRIDEN_PIDM)
 		LEFT JOIN (
-			SELECT   BANNER_ID_C AS DSI_C, MOBILE_PHONE_INTERNAL_DNC_C AS DO_NOT_CONTACT_C FROM  RAW_B2C_SFDC.BRAND_PROFILE_C
+			SELECT   BANNER_ID_C AS DSI_C, MOBILE_PHONE_INTERNAL_DNC_C AS DO_NOT_CONTACT_C FROM  raw_b2c_sfdc.brand_profile_c  
 					WHERE BANNER_ID_C IS NOT NULL AND CAST(MOBILE_PHONE_INTERNAL_DNC_C AS INTEGER) = 1
 							UNION DISTINCT
-			SELECT   BANNER_ID_C, HOME_PHONE_INTERNAL_DNC_C FROM  RAW_B2C_SFDC.BRAND_PROFILE_C
+			SELECT   BANNER_ID_C, HOME_PHONE_INTERNAL_DNC_C FROM  raw_b2c_sfdc.brand_profile_c 
 					WHERE BANNER_ID_C IS NOT NULL AND CAST(HOME_PHONE_INTERNAL_DNC_C AS INTEGER) = 1
 				) C ON
 			(SPRIDEN_ID = C.DSI_C)
 		LEFT JOIN (
-			SELECT
-				DSI_C,
-				EMAIL_OPT_OUT_C
-			FROM
-				(
-				SELECT
-					C.DSI_C , EMAIL_OPT_OUT_C
-					,ROW_NUMBER() OVER (PARTITION BY E.CONTACT_C ORDER BY E.SYSTEM_MODSTAMP DESC) AS RNUM
-				FROM
-					raw_cu_sfdc.email_c E
-				JOIN raw_cu_sfdc.contact C ON
-					(E.CONTACT_C = C.ID
-					AND c.email = e.EMAIL_ADDRESS_C)
-				WHERE
-					C.DSI_C IS NOT NULL )
-			WHERE
-				RNUM = 1
-				AND CAST(EMAIL_OPT_OUT_C as INTEGER) = 1 ) E ON
+			select BANNER_ID_C AS DSI_C, opt_out_email_c AS EMAIL_OPT_OUT_C
+ 					from raw_b2c_sfdc.brand_profile_c			
+ 						where  BANNER_ID_C IS NOT NULL AND CAST(opt_out_email_c AS INTEGER) = 1
+			 ) E ON
 			(SPRIDEN_ID = E.DSI_C)
 		LEFT JOIN (
 			SELECT
@@ -358,11 +344,11 @@ WITH SRC AS (
 			AND CURRENT_DATE BETWEEN ROLE_EFF_DATE AND ROLE_EXP_DATE
 		WHERE
 			SPRIDEN_ENTITY_IND = 'P'
-			AND SPRIDEN_CHANGE_IND IS NULL
+			AND SPRIDEN_CHANGE_IND IS NULL 
 	)
-	SELECT
+	SELECT 
 		FARM_FINGERPRINT(FORMAT('%T', ARRAY_TO_STRING([a.institution, cast(a.person_uid as string)], '-'))) AS etl_pk_hash,
-		FARM_FINGERPRINT(FORMAT('%T', a )) AS etl_chg_hash,
+		FARM_FINGERPRINT(FORMAT('%T', a )) AS etl_chg_hash,    
 		CURRENT_TIMESTAMP            AS etl_created_date,
 		CURRENT_TIMESTAMP            AS etl_updated_date,
 		audit_load_key  AS etl_ins_audit_key,
@@ -382,11 +368,11 @@ WITH SRC AS (
 
 	/* common code */
 	call utility.sp_process_elt(institution, dml_mode, target_dataset, target_tablename, trans_datasetname, trans_tablename, additional_attributes, out_sql);
-
+	
 	call audit_cdw_log.sp_export_audit_cdw_log(audit_load_key,target_tablename, job_start_dt,current_timestamp(), 'Y', job_type, load_method, load_source);
 	set result = 'SUCCESS';
 
-EXCEPTION WHEN ERROR THEN
+EXCEPTION WHEN ERROR THEN 
 
     call audit_cdw_log.sp_export_audit_cdw_log(audit_load_key,target_tablename, job_start_dt,current_timestamp(), 'N', job_type, load_method, load_source);
 
