@@ -14,7 +14,7 @@ select distinct prospect_id, contact_id, inquiry_id, case when assign_opp=0 then
 	    max(approved_application_date) over (partition by prospect_id, inquiry_id, inquiry_created_date, location_code, program_group_code) approved_application_date
 		from
 -- Get the APPROVED_APPLICATION_DATE for each inquiry, NULL is not found
-(select distinct prospect_id, contact_id, inquiry_id, opportunity_id, account_id, inquiry_created_date, campaign_id, ri_contact_date, opp_contact_date, l_contact_date,
+(select distinct prospect_id, contact_id, inquiry_id, opportunity_id, account_id, inquiry_created_date, campaign_id, ri_contact_date, opp_contact_date, contact_date as l_contact_date,
 	    prospect_owner_id, prospect_status, inquiry_scoring_tier, response_score, hdyhau, attendance_preference, prospect_type, address_country_inquiry, address_state_inquiry,
 		address_postal_code_inquiry, location_code, modality_type, opp_program_group_code, program_group_code, program_code,
 		ifnull(next_inquiry_date, timestamp(parse_date('%d/%m/%Y','01/01/9999')) ) next_inquiry_date, prospect_created_date,
@@ -23,9 +23,9 @@ select distinct prospect_id, contact_id, inquiry_id, case when assign_opp=0 then
 			 else null end as approved_application_date,
 		session_start_date, original_intended_start_date, ri_attempted_contact_date, l_attempted_contact_date, opp_attempted_contact_date
 		from
-(select distinct inquiry_id inquiry_id, lead_id prospect_id,converted_opportunity_id, createddate as inquiry_created_date, campaign_id as campaign_id, contact_date ri_contact_date,
-        prospect_created_date, lead(createddate) over (partition by lead_id order by createddate) next_inquiry_date, last_contact_date as l_contact_date, prospect_owner_id,
-		prospect_status, inquiry_scoring_tier, response_score, hdyhau, attendance_preference, prospect_type, address_country_inquiry, address_state_inquiry,
+(select distinct inquiry_id inquiry_id, lead_id prospect_id,converted_opportunity_id, createddate as inquiry_created_date, campaign_id as campaign_id, contact_date as ri_contact_date,
+        prospect_created_date, lead(createddate) over (partition by lead_id order by createddate) next_inquiry_date,
+				prospect_owner_id, prospect_status, inquiry_scoring_tier, response_score, hdyhau, attendance_preference, prospect_type, address_country_inquiry, address_state_inquiry,
 		address_postal_code_inquiry, ri.original_assigned_location_code as location_code, contact_id contact_id, modality_type as modality_type,
 		program_group_code as program_group_code, program_code
 		from
@@ -39,7 +39,7 @@ select distinct prospect_id, contact_id, inquiry_id, case when assign_opp=0 then
                 ,lead.campaign_c as campaign_id
                 ,lead.iq_quality_grade_c as quality_grade
                 ,loc.location_code_c as original_assigned_location_code
-                ,lead.brand_profile_c as contact_id -- rs - based on data_migration_workbook_pt2
+                ,bp.contact_c as contact_id -- rs - based on data_migration_workbook_pt2
                 ,CASE
                   WHEN lead.raw_primary_program_of_interest_c LIKE 'BSN%' AND loc.location_code_c IN ('ON1', 'ON2') THEN 'BSN_ONLINE'
                   WHEN lead.raw_primary_program_of_interest_c LIKE 'ADN%' OR lead.raw_primary_program_of_interest_c LIKE 'ASN%' OR
@@ -92,11 +92,12 @@ select distinct prospect_id, contact_id, inquiry_id, case when assign_opp=0 then
                 ,lead.Created_Date as prospect_created_date -- rs - To get Contact Dates from Lead
                 ,lead.owner_id as prospect_owner_id  -- rs - To get Contact Dates from Lead
                 ,lead.status as prospect_status  -- rs - To get Contact Dates from Lead
-                ,lead.last_contacted_date_c as last_contact_date  -- rs - To get Contact Dates from Lead
+                --,lead.last_contacted_date_c as last_contact_date  -- rs - To get Contact Dates from Lead
 
 
             from raw_b2c_sfdc.lead lead
               left join raw_b2c_sfdc.location_c loc on lead.location_c = loc.id
+              left join raw_b2c_sfdc.brand_profile_c bp on lead.brand_profile_c = bp.id
               where
                 lead.is_deleted=false AND (lead.institution_c in ('a0kDP000008l7bvYAA') OR lead.company in ('Chamberlain'))
                 and extract(date from lead.created_date) > date_add(current_date, interval -10 year)
@@ -121,8 +122,8 @@ left join
           '' as account_id -- rs - Column not needed anymore (just keeping for the sake of view structure)
           ,opp.id as opportunity_id
           ,opp.created_date as oppt_create_date
-          ,opp.contacted_date_c as opp_contact_date
-          ,opp.attempted_contact_date_c as opp_attempted_contact_date
+          ,opp.first_ea_two_way_contact_c as opp_contact_date
+          ,opp.first_contact_attempt_c as opp_attempted_contact_date -- rs - replacing with another field as the CU dictionary Pt2 has not mention the corresponding field
           ,opp.program_code_c as opp_program_code
           ,opp.app_submitted_date_time_c as approved_application_date
           ,opp.session_start_date_c  as session_start_date
@@ -160,11 +161,13 @@ left join
           END  as opp_program_group_code
           ,opp.first_ea_outreach_attempt_c as ri_attempted_contact_date -- rs - getting the date from Oppo
           ,opp.first_ea_outreach_attempt_c as l_attempted_contact_date -- rs - getting the date from Oppo
+					,opp.first_ea_two_way_contact_c as contact_date -- rs - replacement for lead.contact_date_c
 
        from raw_b2c_sfdc.opportunity opp
-       left join raw_b2c_sfdc.location_c loc on opp.location_c = loc.id
+       left join (select distinct loc1.id id, coalesce(loc1.location_code_c, loc2.location_code_c) as location_code_c
+                    from raw_b2c_sfdc.location_c loc1
+                         left join raw_b2c_sfdc.location_c loc2 on loc1.apply_location_c=loc2.id) loc on opp.location_c = loc.id
        left join raw_b2c_sfdc.product_2 prd on opp.program_of_interest_c = prd.id
-
        where opp.is_deleted=False
             and (banner_id_c like 'D%' OR opp.institution_c in ('a0kDP000008l7bvYAA'))
             and extract(date from opp.created_date) > date_add(current_date, interval -8 year)
