@@ -83,7 +83,7 @@ FROM (
         address_number,
         address_start_date,
         address_end_date,
-        scd.student_status
+        scd.student_status 
       FROM (
         SELECT
           DISTINCT dsi,
@@ -107,7 +107,7 @@ FROM (
         FROM
           rpt_academics.t_student_cohort_detail
         WHERE
-          institution ='CU'
+          institution ='CU' 
           AND registered_ind = "Y"
           AND LOWER(
             CASE
@@ -117,12 +117,12 @@ FROM (
           END
             ) IN ("new",
             "readmit")
-
+            
             and cast(academic_period as int64) >= 201240
-
+            
               ) scd
       LEFT JOIN
-
+        
         (
         SELECT
           DISTINCT dsi,
@@ -141,11 +141,12 @@ FROM (
         scd.dsi=da.dsi )
     WHERE
       rnk=1 ) cohort
-
+    
   LEFT JOIN (
     SELECT
-       DISTINCT
+       DISTINCT 
       opp.id as opportunity_id,
+      opp.original_id_c as original_id_c,
       opp.program_code_c AS program_at_application,
       sess.session_code_c AS session_at_application,
       opp.stage_name AS application_stage,
@@ -177,16 +178,18 @@ FROM (
         lead.converted_opportunity_id as converted_opportunity_id
 
           from raw_b2c_sfdc.lead lead
-            left join raw_b2c_sfdc.location_c loc on lead.location_c = loc.id
-        where lead.is_deleted=false AND (lead.institution_c in ('a0kDP000008l7bvYAA') OR lead.company in ('Chamberlain'))
+            left join (select distinct loc1.id id, coalesce(loc1.location_code_c, loc2.location_code_c) as location_code_c
+                          from raw_b2c_sfdc.location_c loc1
+                            left join raw_b2c_sfdc.location_c loc2 on loc1.apply_location_c=loc2.id) loc on lead.location_c = loc.id
+        where lead.is_deleted=false AND (lead.institution_c in ('a0kDP000008l7bvYAA') OR lead.company in ('Chamberlain')) 
 
     ) inq ON opp.id = inq.converted_opportunity_id
     WHERE
        --opp.credited_raw_inquiry IS NOT NULL -- rs - this condition might not be needed. Check again in future
        opp.is_deleted = False
-      and opp.institution_c in ('a0kDP000008l7bvYAA')
+      and opp.institution_c in ('a0kDP000008l7bvYAA') 
   ) sf
-  ON cohort.guid = sf.opportunity_id ) new_stu
+  ON cohort.guid = coalesce(sf.original_id_c, sf.opportunity_id) ) new_stu
   /* Get previous campaigns & corresponding inquries for past 180 days */
 LEFT JOIN (
   SELECT
@@ -208,7 +211,7 @@ LEFT JOIN (
         raw_b2c_sfdc.lead
       WHERE
         is_deleted = False
-        AND created_date >= DATE_SUB( created_date, INTERVAL 180 day)
+        AND created_date >= DATE_SUB( created_date, INTERVAL 180 day) 
         )
     WHERE
       rnk<=3 ) PIVOT( MAX(inq_cmp) FOR rnk IN (1,
