@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_case_history_owned_by_worked_on_by as
 select
    ch.id,
    ch.is_deleted,
