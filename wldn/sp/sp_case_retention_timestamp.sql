@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE trans_crm_mart.sp_case_retention_timestamp()
 begin
 
 
