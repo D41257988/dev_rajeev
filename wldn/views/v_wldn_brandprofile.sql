@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_brandprofile as
 SELECT sbp.*,
 CASE WHEN  SS.ISO_Code_c in ('AA', 'AE', 'AP', 'PR', 'VI', 'GU', 'AS', 'FR','MP', 'UM','PW','FM','MH','CM','CZ','RQ') Then 1
 	WHEN cast(Ifnull(SC.Name,SBP.Billing_Country_Text_c) AS string) Is Not Null and cast(Ifnull(SC.Name,SBP.Billing_Country_Text_c) as string) Not In ('us', 'u.s.','United States','usa','u.s.a.') Then 1

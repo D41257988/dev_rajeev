@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_case_owner_division as
 select
    c.id,
    c.is_deleted,
@@ -230,10 +231,10 @@ select
    coalesce(uc.department_c , uc.department, queue_createdby.departmentname ) as created_by_department,
    uc.division as created_by_division
 from
-   `stg_l1_salesforce.case` c
-   left join `stg_l1_salesforce.user`  uo  on c.owner_id = uo.id
+   `raw_b2c_sfdc.case` c
+   left join `raw_b2c_sfdc.user`  uo  on c.owner_id = uo.id
    left join `rpt_bi_edw.dim_loe_queue`  queue_owner on lower(c.owner_id) = lower(queue_owner.queuesfid)
-   left join `stg_l1_salesforce.user`  uc on c.created_by_id = uc.id
+   left join `raw_b2c_sfdc.user`  uc on c.created_by_id = uc.id
    left join `rpt_bi_edw.dim_loe_queue` queue_createdby on lower(c.created_by_id) = lower(queue_createdby.queuesfid)
 
 where

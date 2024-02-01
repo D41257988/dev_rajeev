@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_opportunity_field_history as
 select
 oh.id,
 is_deleted,

@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_sto_speedoutreach as
 With Outreach As
 (
 Select distinct

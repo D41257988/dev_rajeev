@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_apps_one_element_missing as
 with temp_opp as
 (select opp.id,st.start_date_c,opp.stage_name,opp.institution_c
 from `raw_b2c_sfdc.opportunity` opp

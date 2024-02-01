@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_all_user_manager as
 with CTE
 as
 	(	select  source , id as user_sfid , ManagerId, name , Manager_Name ,Etl_Process_Dt ,lastmodifieddate ,createddate, Department , Division ,isactive , title ,email

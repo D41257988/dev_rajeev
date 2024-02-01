@@ -1,4 +1,4 @@
-
+create or replace view rpt_crm_mart.v_wldn_loe_einstein_nba_opptracking as
 select a.*, ea.division,ea.location_c as location ,em.name as ea_manager_name,ea.name as ea_name ,ea.is_active
 from
 (
