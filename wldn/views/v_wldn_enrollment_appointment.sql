@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_enrollment_appointment as
 select * ,case when msi_email_tsk.msi_email_date is null then 'No' else 'Yes' end  as msi_email
 from(
  select *,row_number() over (partition by  appointment_number order by case when SLA = 'Met' then 1 end desc,new_task_created_date)  as rn
