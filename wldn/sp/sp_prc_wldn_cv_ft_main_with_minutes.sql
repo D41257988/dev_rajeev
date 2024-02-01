@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_academics.sp_prc_wldn_cv_ft_main_with_minutes`(v_audit_key STRING, OUT v_result_sp_prc_wldn_cv_ft_main_with_minutes STRING)
 begin
 
 declare institution string default 'WLDN';
