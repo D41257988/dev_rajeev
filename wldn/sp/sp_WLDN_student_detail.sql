@@ -1,6 +1,7 @@
+CREATE OR REPLACE PROCEDURE tds_analytics_storage.sp_WLDN_student_detail()
 BEGIN
 /*Begin PBI Query to temp table */
---SOAR CU Banner Data Elements POC.
+--SOAR CU Banner Data Elements POC. 
 --The cardinality for this main SQL script will be one row per student (per active hold if any)
 --Final name changes done to align query output with existing PBI file entries
 CREATE OR REPLACE TEMP TABLE CURRENT_TERM AS (
@@ -36,10 +37,10 @@ CREATE OR REPLACE TEMP TABLE CT_COURSE AS (
        FROM rpt_semantic.student_course
        WHERE INSTITUTION = 'WLDN');
 
-CREATE OR REPLACE TEMP TABLE CN_TERMS AS
+CREATE OR REPLACE TEMP TABLE CN_TERMS AS 
 (
   Select MAX(CASE
-         WHEN TERMS_FINAL.RNK = 1 THEN TERMS_FINAL.TERM_CODE
+         WHEN TERMS_FINAL.RNK = 1 THEN TERMS_FINAL.TERM_CODE 
          END) Next_Term_Code,
          MAX(CASE
          WHEN TERMS_FINAL.RNK = 1 THEN TERMS_FINAL.TERM_NAME
@@ -133,11 +134,11 @@ CREATE OR REPLACE TEMP TABLE CT_CONTACT AS (
                      LEFT OUTER JOIN `raw_b2c_sfdc.contact` a  ON t.account_ID = a.account_id
               WHERE CAST(T.activity_date as date)> '2022-01-01'
               and what_id in (select id from raw_b2c_sfdc.opportunity where is_deleted=false AND institution_c in ('a0ko0000002BSH4AAO'))
-
+              
               ) c
        WHERE c.rnk = 1);
 
-CREATE OR REPLACE TEMP TABLE CT_SFDC AS
+CREATE OR REPLACE TEMP TABLE CT_SFDC AS 
 (
   WITH ADVISOR AS (
     Select DISTINCT u.ID,
@@ -146,7 +147,7 @@ CREATE OR REPLACE TEMP TABLE CT_SFDC AS
            u.LAST_NAME
            --c2.NAME Manager_Name,
                     -- c2.DVTAP_COLLEAGUE_ID_C Manager_DSI
-    FROM `raw_b2c_sfdc.user` u
+    FROM `raw_b2c_sfdc.user` u 
        LEFT OUTER JOIN `raw_b2c_sfdc.user` u2 ON u.MANAGER_ID = u2.ID
        where u._fivetran_deleted =  false
        /*LEFT OUTER JOIN (
@@ -177,7 +178,7 @@ CREATE OR REPLACE TEMP TABLE CT_SFDC AS
  CASE
                      WHEN cast(a.last_ssa_outreach_attempt_date_c as date) >=
                      CASE
-                     WHEN EXTRACT(DAYOFWEEK FROM CURRENT_DATE) = 1
+                     WHEN EXTRACT(DAYOFWEEK FROM CURRENT_DATE) = 1 
                      THEN date_add(CURRENT_DATE, INTERVAL -3 DAY)
                             ELSE date_add(CURRENT_DATE, INTERVAL -1 DAY)
                      END THEN 'Y'
@@ -353,7 +354,7 @@ Select DISTINCT STUDY.PERSON_UID spriden_pidm,
        BALANCE.total_balance,
           advisor_review.reviewed_prior_day,
           advisor_review.reviewed_prior_7_days,
-          CASE
+          CASE 
        WHEN cast(advisor_review.last_ssa_outreach_attempt_date_c as date)  >= TERMS.Current_Term_Start THEN 'Y'
           ELSE 'N'
           END reviewed_since_term_start,
@@ -378,13 +379,13 @@ Select DISTINCT STUDY.PERSON_UID spriden_pidm,
           HOLDS.HOLD_DESC stvhldd_desc,
           HOLDS.HOLD_EXPLANATION sprhold_reason,
           HOLDS.finaid_hold,
-          MAX(CASE
-           WHEN HOLDS.finaid_hold = 'N' THEN 'Yes'
-           ELSE 'No'
+          MAX(CASE 
+           WHEN HOLDS.finaid_hold = 'N' THEN 'Yes' 
+           ELSE 'No' 
            END) OVER (PARTITION BY STUDY.PERSON_UID) has_academic_hold,
-          MAX(CASE
-           WHEN HOLDS.finaid_hold = 'Y' THEN 'Yes'
-           ELSE 'No'
+          MAX(CASE 
+           WHEN HOLDS.finaid_hold = 'Y' THEN 'Yes' 
+           ELSE 'No' 
            END) OVER (PARTITION BY STUDY.PERSON_UID) has_finaid_hold,
        /*advisor_review.LAST_REVIEWED_C last_reviewed_date,
        advisor_review.LAST_REVIEWED_SF_C,
@@ -440,7 +441,7 @@ INNER JOIN (
   Select REG_SUB.PERSON_UID,
          REG_SUB.ACADEMIC_PERIOD
   FROM CT_COURSE REG_SUB
-  WHERE
+  WHERE 
    REG_SUB.ACADEMIC_PERIOD IN (
     Select REG_TERM.TERM_CODE
     FROM (
@@ -462,7 +463,7 @@ AND INT_ADDR.ACTIVITY_DATE = INT_ADDR.Max_Email_Date
 LEFT OUTER JOIN CN_TERMS TERMS
 ON TERMS_JOIN = TERMS.TERMS_JOIN
 --Basic Phone data giving preference to cellphone values and backing up with personal phone data.
-LEFT OUTER JOIN CT_PHONE PHONE
+LEFT OUTER JOIN CT_PHONE PHONE 
 ON STUDY.PERSON_UID = PHONE.PERSON_UID
 --Bring in GPA value by person and level of study
 LEFT OUTER JOIN (
@@ -477,8 +478,8 @@ AND STUDY.STUDENT_LEVEL = GPA.ACADEMIC_STUDY_VALUE
 --Bring in current account balance
 LEFT OUTER JOIN (
        SELECT DISTINCT BALANCE_SUB.ACCOUNT_UID,
-              SUM(CASE
-            WHEN BALANCE_SUB.DETAIL_CODE_TYPE = 'P' THEN BALANCE_SUB.AMOUNT * -1
+              SUM(CASE 
+            WHEN BALANCE_SUB.DETAIL_CODE_TYPE = 'P' THEN BALANCE_SUB.AMOUNT * -1 
             ELSE BALANCE_SUB.AMOUNT
             END) OVER (PARTITION BY BALANCE_SUB.ACCOUNT_UID) total_balance
        FROM `rpt_semantic.receivable_account_detail` BALANCE_SUB
@@ -498,13 +499,13 @@ LEFT OUTER JOIN (
                  END finaid_hold,
            HOLD_SUB.HOLD_AMOUNT
        FROM `rpt_semantic.hold` HOLD_SUB
-       WHERE CURRENT_DATE BETWEEN EXTRACT(DATE FROM HOLD_SUB.HOLD_FROM_DATE)
+       WHERE CURRENT_DATE BETWEEN EXTRACT(DATE FROM HOLD_SUB.HOLD_FROM_DATE) 
     AND COALESCE(EXTRACT(DATE FROM HOLD_SUB.HOLD_TO_DATE),'9999-12-31')
-    AND HOLD_SUB.INSTITUTION = 'WLDN') HOLDS
+    AND HOLD_SUB.INSTITUTION = 'WLDN') HOLDS 
 ON STUDY.PERSON_UID = HOLDS.PERSON_UID
 
 --Bring in most recent file review data
-LEFT OUTER JOIN CT_CONTACT contact
+LEFT OUTER JOIN CT_CONTACT contact 
 ON STUDY.DSI = contact.DSI_PC
 --Establish if student is registered in current term or not
 /*LEFT OUTER JOIN (
@@ -587,4 +588,4 @@ WHERE STUDY.INSTITUTION = 'WLDN'
 );
 
 /*End PBI Query*/
-END
+END;
