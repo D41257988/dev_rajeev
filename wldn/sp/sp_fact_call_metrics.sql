@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE rpt_performance_mgmt.sp_fact_call_metrics()
 begin
 
     declare institution string default 'WLDN';
