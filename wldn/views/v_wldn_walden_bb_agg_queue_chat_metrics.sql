@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_walden_bb_agg_queue_chat_metrics as
 select 'Blackboard FS' as content_area_1
 	,'Blackboard FS' as content_area_2
 	,'Blackboard FS' as queue_name
