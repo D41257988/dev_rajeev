@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `stg_l1_salesforce.usp_prc_l1_opportunity_cl_score_tile_update`()
+OPTIONS (strict_mode=true)
 BEGIN
 -- declare constants
 declare curr_timestamp timestamp;
