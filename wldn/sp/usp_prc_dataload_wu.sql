@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `tds_analytics_partner_portal.usp_prc_dataload_wu`()
+OPTIONS (strict_mode=false)
 BEGIN
 
 delete from tds_analytics_partner_portal.organization_wu_master where true;
