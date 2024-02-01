@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `trans_academics.sp_rrt_common_code`(v_audit_key STRING, OUT v_rrt_common_code STRING)
+OPTIONS (strict_mode=false)
 begin
 declare institution string default 'WLDN';
 declare institution_id int64 default 5;
