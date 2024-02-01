@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_loe_brand_profile as
 select
    b.id as brand_profile_id,
    b.banner_id_c,
