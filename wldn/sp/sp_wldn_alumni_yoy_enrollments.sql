@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_academics.sp_wldn_alumni_yoy_enrollments`(IN v_audit_key STRING, OUT result STRING)
 begin
 
 declare institution string default 'WLDN';
