@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_case_owner_division as
 select
    c.id,
    c.is_deleted,
