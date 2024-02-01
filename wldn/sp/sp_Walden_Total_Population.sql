@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE tds_analytics_storage.sp_Walden_Total_Population()
 BEGIN
 Create or replace temp table Base_Population as(
     SELECT DISTINCT
