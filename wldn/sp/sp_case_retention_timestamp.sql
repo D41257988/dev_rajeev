@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE trans_crm_mart.sp_case_retention_timestamp()
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_case_retention_timestamp`(IN v_audit_key STRING, OUT result STRING)
 begin
 
 
