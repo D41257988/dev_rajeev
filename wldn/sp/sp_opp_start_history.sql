@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_opp_start_history`(IN v_audit_key STRING, OUT result STRING)
 begin
 
     declare institution string default 'WLDN';
