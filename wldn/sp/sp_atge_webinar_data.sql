@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE trans_crm_mart.sp_atge_webinar_data()
 begin
 
     declare institution string default 'WLDN';
