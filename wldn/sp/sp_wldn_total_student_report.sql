@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_total_student_report`(IN v_audit_key STRING, OUT result STRING)
 BEGIN
     declare institution string default 'WLDN';
     declare institution_id int64 default 5;
