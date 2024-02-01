@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_ra_case as
 SELECT sc.*
 FROM `raw_b2c_sfdc.case` sc
 inner JOIN `stg_l1_salesforce.record_type` srt
