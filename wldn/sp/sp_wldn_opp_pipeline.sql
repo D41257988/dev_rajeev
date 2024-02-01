@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE `daas-cdw-dev.trans_crm_mart.sp_wldn_opp_pipeline`(IN v_audit_key STRING, OUT result STRING)
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_opp_pipeline`(IN v_audit_key STRING, OUT result STRING)
 begin
 
     declare institution string default 'WLDN';
