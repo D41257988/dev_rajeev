@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_case_service_unclosed_sla`()
 begin
 
 declare v_startdate date default date_sub(current_date(), INTERVAL 200 day);
