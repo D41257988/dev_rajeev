@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_academics.sp_wldn_reconciled_list_cube`(IN v_audit_key STRING, OUT result STRING)
 begin
 
 declare institution string default 'WLDN';
