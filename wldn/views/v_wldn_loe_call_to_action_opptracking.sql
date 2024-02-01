@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_loe_call_to_action_opptracking as
 select a.*, ea.division,ea.location_c as location ,em.name as ea_manager_name,ea.name as ea_name ,ea.is_active , ed.name as ea_director_name
 from
 (
