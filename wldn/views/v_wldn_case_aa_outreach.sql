@@ -1,4 +1,4 @@
-CREATE VIEW `stg_l1_salesforce.v_wldn_case_aa_outreach`
+CREATE or REPLACE VIEW `rpt_crm_mart.v_wldn_case_aa_outreach`
 OPTIONS(
   description="v_case_aa_outreach",
   labels=[("source", "salesforce"), ("institution", "wldn"), ("type", "case"), ("sub-type", "")]
@@ -145,7 +145,7 @@ BASE_ADVISOR AS
 		,NULL AS Assignment_Group -- This column is removed
 		,NULL AS Domestic
 		,Manager_name
-	FROM `stg_l1_salesforce.v_service_user` -- RS-Need to change this as well
+	FROM `rpt_crm_mart.v_wldn_service_user` 
 
 	UNION all
 	SELECT
@@ -156,7 +156,7 @@ BASE_ADVISOR AS
 		,NULL AS AssignmentGroup
 		,NULL AS Domestic
 		,NULL AS Manager
-	FROM `stg_l1_salesforce.group` where Type like '%Queue%' -- RS- Table not present in B2C Schema. Ask Sanjay to load the table
+	FROM `raw_b2c_sfdc.group` where Type like '%Queue%' 
 ),
 
 BASE_PRODUCT AS
@@ -164,7 +164,7 @@ BASE_PRODUCT AS
 	SELECT
 		id as ProductSfId,
 		name as ProductNbr
-	FROM `stg_l1_salesforce.product_2` -- RS- Table not present in B2C Schema. Ask Sanjay to load the table
+	FROM `raw_b2c_sfdc.product_2`
 	WHERE
 		Institution_c = 'a0ko0000002BSH4AAO'
 )
