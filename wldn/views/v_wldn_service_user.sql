@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_service_user as
 select
    u.*except(_fivetran_synced,department,department_c),
    coalesce(u.department, u.department_c) as owner_department,
