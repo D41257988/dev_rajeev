@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_loe_enrollment_advisors as
 select
    u.id,
    u.username,
