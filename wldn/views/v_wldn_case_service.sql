@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_wldn_case_service as
 SELECT c.*,u.name as collector,u.username,m.name as manager_name,u.alias,EXTRACT(YEAR from c.last_modified_date) as year,EXTRACT(MONTH from c.last_modified_date) as month
  FROM `raw_b2c_sfdc.case` c
 left join `raw_b2c_sfdc.user` u on c.owner_id=u.id
