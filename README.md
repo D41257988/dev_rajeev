@@ -1,7 +1,8 @@
 # dev_rajeev - for testing purposes
 
 **List of views Migrating**:-
-	1. rpt_crm_mart.v_wldn_agg_queue_live_agent_chat
+	
+ 	1. rpt_crm_mart.v_wldn_agg_queue_live_agent_chat
 	2. rpt_crm_mart.v_wldn_all_user_manager
 	3. rpt_crm_mart.v_wldn_apps_one_element_missing
 	4. rpt_crm_mart.v_wldn_brandprofile
