@@ -25,7 +25,7 @@
 	22. rpt_crm_mart.v_wldn_ra_case
 	23. rpt_crm_mart.v_wldn_service_user
 	24. rpt_crm_mart.v_wldn_sto_speedoutreach
-  25. rpt_crm_mart.v_wldn_walden_bb_agg_queue_chat_metrics
+  	25. rpt_crm_mart.v_wldn_walden_bb_agg_queue_chat_metrics
 
 **List of SPs Migrating**:-
 
