@@ -72,7 +72,7 @@ or  brand_profile_c in
 select walden_account_id from tds_analytics_partner_portal.hospital_wu_master) or Parent_Account_Name_c in (
 select walden_account_id from tds_analytics_partner_portal.hospital_wu_master) or employer_name_c in (select walden_account_name from tds_analytics_partner_portal.hospital_wu_master)
 or BD_Account_c in (select walden_parent_id from tds_analytics_partner_portal.hospital_wu_master)or Parent_Account_Name_c in (select walden_parent_id from tds_analytics_partner_portal.hospital_wu_master)
-)))) and is_deleted is false;
+)))) and is_deleted is false and o.institution_c='a0ko0000002BSH4AAO';
 
 ----*******************************
 
