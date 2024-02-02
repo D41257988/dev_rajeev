@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `tds_analytics_partner_portal.usp_prc_dataload_wireframe`()
+OPTIONS (strict_mode=false)
 BEGIN
 
 delete from tds_analytics_partner_portal.wireframe_partner_portal where true;

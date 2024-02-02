@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `daas-cdw-dev.trans_crm_mart.sp_wldn_case_retention_unclosed_sla`()
 begin
 
 declare v_startdate date default null;

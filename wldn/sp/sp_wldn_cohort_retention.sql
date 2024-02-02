@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_cohort_retention`(IN v_audit_key STRING, OUT result STRING)
 begin
 
 declare institution string default 'WLDN';

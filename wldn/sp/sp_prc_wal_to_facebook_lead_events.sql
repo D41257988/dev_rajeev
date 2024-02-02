@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_bi_offline_conversion.sp_prc_wal_to_facebook_lead_events`(IN AUDITKEY STRING, OUT RESULT STRING)
 begin
 
 declare v_startdate timestamp default current_timestamp();
@@ -50,7 +51,7 @@ declare fromdate timestamp default timestamp_sub(timestamp(datetime(current_time
             opp.transaction_id_c, opp.app_start_event_id_c,
             opp.app_submit_event_id_c, opp.fb_leadgen_id_c
         from `raw_b2c_sfdc.opportunity` opp
-        join `stg_l1_salesforce.opportunity_field_history` ofh
+        join `raw_b2c_sfdc.opportunity_field_history` ofh
             on opp.id = ofh.opportunity_id
             and timestamp(datetime(ofh.created_date,"America/New_York")) >= fromdate
             and ofh.field in ( 'StageName' , 'Disposition__c')

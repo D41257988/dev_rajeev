@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_total_student_report`(IN v_audit_key STRING, OUT result STRING)
 BEGIN
     declare institution string default 'WLDN';
     declare institution_id int64 default 5;
@@ -744,7 +745,7 @@ FROM degreed_total dt
                 MAX(op.Start_Date_c) AS MR_Opp_Start_Date
             FROM degreed_total dt
                 LEFT JOIN `raw_b2c_sfdc.opportunity`  op
-                    ON dt.credential_id = op.banner_id_c
+                    ON dt.credential_id = op.banner_id_c and op.institution_c = 'a0ko0000002BSH4AAO' and op.is_deleted = False
                     AND op.primary_flag_c = true
 
             GROUP BY dt.credential_id
@@ -1058,7 +1059,7 @@ SELECT ndt.credential_id,
        MAX(op.Start_Date_c) AS MR_Opp_Start_Date
 FROM ndegreed_total ndt
     LEFT JOIN `raw_b2c_sfdc.opportunity` op
-    ON ndt.credential_id = op.banner_id_c
+    ON ndt.credential_id = op.banner_id_c  and op.institution_c = 'a0ko0000002BSH4AAO' and op.is_deleted = False
         AND op.primary_flag_c = true
         --    and op._fivetran_deleted=false
 GROUP BY ndt.credential_id)

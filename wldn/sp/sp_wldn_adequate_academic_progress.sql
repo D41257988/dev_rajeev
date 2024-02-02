@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_academics.sp_wldn_adequate_academic_progress`(v_audit_key STRING, OUT result STRING)
 begin
 
     declare institution string default 'WLDN';

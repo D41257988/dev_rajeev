@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_case_service_timestamp`(IN v_audit_key STRING, OUT result STRING)
 begin
 
 

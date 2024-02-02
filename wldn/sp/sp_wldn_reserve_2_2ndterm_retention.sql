@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `trans_crm_mart.sp_wldn_reserve_2_2ndterm_retention`(IN v_audit_key STRING, OUT result STRING)
 begin
 
     declare institution string default 'WLDN';

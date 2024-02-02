@@ -1,3 +1,4 @@
+CREATE OR REPLACE PROCEDURE `rpt_external.sp_prc_wal_to_linkedin_lead_events`(IN AUDITKEY STRING, OUT RESULT STRING)
 begin
 
  DECLARE

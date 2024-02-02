@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `trans_bi_offline_conversion.sp_wal_to_facebook_lead_events`(IN AUDITKEY STRING, OUT RESULT STRING)
+OPTIONS (strict_mode=false)
 begin
 
 declare v_startdate timestamp default current_timestamp();

@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE `stg_l1_salesforce.usp_prc_l1_opportunity_cl_score_tile_update`()
+OPTIONS (strict_mode=true)
 BEGIN
 -- declare constants
 declare curr_timestamp timestamp;
@@ -25,7 +27,7 @@ Select opp.id, 'false' as new_opp_button_c
 ,'usp_prc_l1_opportunity_cl_score_tile_update'      as etl_resource_name
 from `daas-ml-prod.wu_model_cdm.lead_closed_lost_score_latest` cl
 JOIN `raw_b2c_sfdc.opportunity` opp
-ON opp.id = cl.sf_id and cl.scoring_model_name = 'Closed Lost Score'
+ON opp.id = cl.sf_id and cl.scoring_model_name = 'Closed Lost Score' and opp.is_deleted=false and opp.institution_c='a0ko0000002BSH4AAO'
 LEFT JOIN `raw_b2c_sfdc.user` u
 ON u.id = opp.previous_opportunity_ownerid_c
 ;
