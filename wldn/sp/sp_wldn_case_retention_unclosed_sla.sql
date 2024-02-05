@@ -71,7 +71,7 @@ with unique_case as (
     -- date(CH.created_date) >= v_startdate and date(CH.created_date) < v_enddate
     cast(`utility.udf_convert_UTC_to_EST`(CH.created_date) as date) >= v_startdate and cast(`utility.udf_convert_UTC_to_EST`(CH.created_date) as date) < v_enddate
     and C.record_type_id = '012o00000012ZrkAAE' and C.status != 'Closed'
-    and C.institution_brand_c = 'a0ko0000002BSH4AAO'
+    and (C.institution_brand_c in ('a0kDP000008l7bvYAA') OR C.institution_code_c = 3.0)
     and C.is_deleted = false
 
 
