@@ -67,7 +67,7 @@ with unique_case as (
     cast(`utility.udf_convert_UTC_to_EST`(CH.created_date) as date) >= v_startdate
     and cast(`utility.udf_convert_UTC_to_EST`(CH.created_date) as date) < v_enddate
     and C.record_type_id in ('012o00000012bKoAAI', '012o00000012ZrjAAE', '0121N0000019B0JQAU', '0121N000000uGPJQA2', '0121N000001AQG8QAO', '0121N000000qslUQAQ', '0121N000000qslTQAQ')
-    and C.institution_brand_c = 'a0ko0000002BSH4AAO'
+    and (C.institution_brand_c in ('a0kDP000008l7bvYAA') OR C.institution_code_c = 3.0)
     and C.is_deleted = false
 
 ),
@@ -958,7 +958,7 @@ case_tbl_closed_cases as (
     and coi.id not in (select distinct case_id from case_history where new_value is not null and old_value is not null )
     and coi.status = 'Closed'
     and coi.record_type_id in ('012o00000012bKoAAI', '012o00000012ZrjAAE', '0121N0000019B0JQAU', '0121N000000uGPJQA2', '0121N000001AQG8QAO', '0121N000000qslUQAQ', '0121N000000qslTQAQ')
-    and coi.institution_brand_c = 'a0ko0000002BSH4AAO'
+    and (coi.institution_brand_c in ('a0kDP000008l7bvYAA') OR coi.institution_code_c = 3.0)
 
 )
 
