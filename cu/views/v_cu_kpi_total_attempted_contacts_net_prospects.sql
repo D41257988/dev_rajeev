@@ -7,13 +7,10 @@ select
 	what_id as whatid,
 	owner_id as task_owner_id,
 	created_date as activity_created_date,
-	   case when skill_c like ('RN_%')
-                  or skill_c like ('Grad_%')
-                  or skill_c like ('Pre_%')
-          then true else false end as dialer_touched_ind,
-
-     case when upper(skill_c) like ('%_ASC_%') then 'ASC'
-          when upper(skill_c) like ('%_CAMPUS_%') then 'CAMPUS'     else null end as asc_touched
+	  -- case when skill_c like ('RN_%') or skill_c like ('Grad_%') or skill_c like ('Pre_%') then true else false end as dialer_touched_ind, -- rs - uncomment once the column is available and remove the dummy ones from 12,13 line
+    -- case when upper(skill_c) like ('%_ASC_%') then 'ASC' when upper(skill_c) like ('%_CAMPUS_%') then 'CAMPUS'     else null end as asc_touched  -- rs - uncomment once the column is available remove the dummy ones from 12,13 line
+    case when 'skill_c' like ('RN_%') or 'skill_c' like ('Grad_%') or 'skill_c' like ('Pre_%') then true else false end as dialer_touched_ind, 
+    case when upper('skill_c') like ('%_ASC_%') then 'ASC' when upper('skill_c') like ('%_CAMPUS_%') then 'CAMPUS'     else null end as asc_touched 
   from raw_b2c_sfdc.task
 where is_deleted = False
       and upper(subject)
@@ -80,8 +77,10 @@ select *, row_number() over (partition by prospect_id, inquiry_id order by inqui
 (
 	select distinct prospect_id, inquiry_id, opportunity_id, task_id, task_owner_id,
     campaign_id, inquiry_created_date,
-    ri_attempted_contact_date as attempted_contact_date,
-		l_attempted_contact_date, opp_attempted_contact_date,
+    -- ri_attempted_contact_date as attempted_contact_date, -- rs - there is no inquiry attempted contact date
+		l_attempted_contact_date as attempted_contact_date,
+    l_attempted_contact_date, 
+    opp_attempted_contact_date,
 		session_start_date, original_intended_start_date,
     activity_created_date, next_inquiry_date, approved_application_date,
 		prospect_status, prospect_owner_id, inquiry_scoring_tier, location_code,
@@ -91,7 +90,7 @@ from rpt_crm_mart.v_cu_kpi_unique_prospects up
 inner join
 contacted_tasks t
 on t.whoid=up.prospect_id and whoid is not null
-where coalesce(ri_attempted_contact_date, l_attempted_contact_date, activity_created_date) is not null
+where coalesce(l_attempted_contact_date, activity_created_date) is not null
 )
 
 union all
@@ -99,8 +98,11 @@ union all
 (
 	select distinct prospect_id, inquiry_id, opportunity_id, task_id, task_owner_id,
     campaign_id, inquiry_created_date,
-    ri_attempted_contact_date as attempted_contact_date,
-		l_attempted_contact_date, opp_attempted_contact_date, session_start_date, original_intended_start_date,
+    -- ri_attempted_contact_date as attempted_contact_date,  -- rs - there is no inquiry attempted contact date
+    opp_attempted_contact_date as attempted_contact_date
+		,l_attempted_contact_date, 
+    opp_attempted_contact_date, 
+    session_start_date, original_intended_start_date,
     activity_created_date, next_inquiry_date, approved_application_date,
 		prospect_status, prospect_owner_id, inquiry_scoring_tier, location_code,
     modality_type, program_group_code, dialer_touched_ind, asc_touched,
@@ -109,16 +111,19 @@ union all
 inner join
 contacted_tasks t
 on t.whoid=up.contact_id and whoid is not null
-where coalesce(ri_attempted_contact_date, l_attempted_contact_date, activity_created_date) is not null
+where coalesce(l_attempted_contact_date, activity_created_date) is not null
 )
 
+/* rs - there is no inquiry level details anymore
 union all
 
 (
 	select distinct prospect_id, inquiry_id, opportunity_id, task_id, task_owner_id,
     campaign_id, inquiry_created_date,
     opp_attempted_contact_date as attempted_contact_date,
-    l_attempted_contact_date, opp_attempted_contact_date, session_start_date, original_intended_start_date,
+    l_attempted_contact_date, 
+    opp_attempted_contact_date, 
+    session_start_date, original_intended_start_date,
     activity_created_date, next_inquiry_date, approved_application_date,
     prospect_status, prospect_owner_id, inquiry_scoring_tier, location_code,
     modality_type, program_group_code, dialer_touched_ind, asc_touched,
@@ -129,7 +134,7 @@ contacted_tasks t
 on t.whatid=up.opportunity_id and whatid is not null
 where assign_opp=1 and coalesce(opp_attempted_contact_date, l_attempted_contact_date, activity_created_date) is not null
 )
-
+*/
 
 ))
 
