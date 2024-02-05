@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_unique_prospects as
 select distinct prospect_id, contact_id, 
          inquiry_id, case when assign_opp=0 then null else opportunity_id end as opportunity_id, 
          -- account_id, 
