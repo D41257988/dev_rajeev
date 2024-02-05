@@ -29,7 +29,7 @@ begin
         opp.app_start_event_id_c,
         opp.app_submit_event_id_c,
         opp.fb_leadgen_id_c,
-        opp.li_fat_id_c
+        '' as li_fat_id_c -- rs - deleted from Oppo
       FROM
         `raw_b2c_sfdc.opportunity` opp /* where left(string(opp.created_date,"America/New_York"), 10) = cast(fromdate as string) */
         left join `raw_b2c_sfdc.campaign` h on opp.campaign_id = h.id and h.is_deleted = false
@@ -56,7 +56,7 @@ begin
         opp.app_start_event_id_c,
         opp.app_submit_event_id_c,
         opp.fb_leadgen_id_c,
-        opp.li_fat_id_c
+        '' as li_fat_id_c -- rs - deleted from Oppo
       FROM
         `raw_b2c_sfdc.opportunity` opp
       JOIN
@@ -89,7 +89,7 @@ begin
         opp.app_start_event_id_c,
         opp.app_submit_event_id_c,
         opp.fb_leadgen_id_c,
-        opp.li_fat_id_c
+        '' as li_fat_id_c -- rs - deleted from Oppo
       FROM
         `raw_b2c_sfdc.opportunity` opp
       JOIN
