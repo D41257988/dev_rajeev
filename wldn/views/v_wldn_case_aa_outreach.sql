@@ -30,7 +30,7 @@ with temp_cte as (
 									and c.record_type_id in ('012o00000012ZrkAAE')
 									and o.institution_c='a0ko0000002BSH4AAO'
 									) CR -- RS - Deriving the case retention directly from the table
-		where CR.institution_brand_c = 'a0ko0000002BSH4AAO'
+		where (CR.institution_brand_c in ('a0kDP000008l7bvYAA') OR CR.institution_code_c = 3.0)
     ),
 
 
