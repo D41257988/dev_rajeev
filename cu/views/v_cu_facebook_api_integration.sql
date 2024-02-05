@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_facebook_api_integration as
 SELECT distinct 'CU' AS Institution
 ,LEAD.Id as Lead_Id
 --,INQ.Id as Inquiry_Id -- raj - inquiry table is going away in sandbox
