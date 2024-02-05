@@ -31,7 +31,7 @@ END
   AS dialer_touched_ind,
   asc_touched_ind,
   writing_period,
-  sfdc_lead.drips_state_c
+  sfdc_oppo.drips_state_c
 FROM
   -- Get the very first contacted tasks after the valid inquiry
   (
@@ -105,6 +105,8 @@ FROM
     OR program_group_code IN ('BSN_ONLINE') ) as t_1
 left join `raw_b2c_sfdc.lead` as sfdc_lead
 on t_1.prospect_id = sfdc_lead.id and sfdc_lead.is_deleted=false AND (sfdc_lead.institution_c in ('a0kDP000008l7bvYAA') OR sfdc_lead.company in ('Chamberlain')) -- rs - added CU filter
+left join `raw_b2c_sfdc.opportunity` as sfdc_oppo 
+on sfdc_oppo.id = sfdc_lead.converted_opportunity_id  and sfdc_oppo.institution_c in ('a0kDP000008l7bvYAA') and sfdc_oppo.is_deleted = False
 WHERE
   inq_task_rank = 1
   AND writing_period IS NOT NULL
