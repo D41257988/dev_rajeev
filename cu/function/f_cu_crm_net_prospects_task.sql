@@ -39,12 +39,16 @@ select *, row_number() over (partition by prospect_id, inquiry_id order by inqui
 
  -- Pick the minimum between ACTIVITY_CREATED_DATE & CONTACT_DATE & CONTACT_DATE from Lead
 (select distinct prospect_id, inquiry_id, opportunity_id, task_id, task_owner_id, campaign_id, inquiry_scoring_tier, inquiry_created_date, prospect_owner_id
-	,least(ifnull(l_contact_date, timestamp(parse_date('%d/%m/%Y','01/01/9999'))), ifnull(contact_date, timestamp(parse_date('%d/%m/%Y','01/01/9999'))),
+	,least(
+		--ifnull(l_contact_date, timestamp(parse_date('%d/%m/%Y','01/01/9999'))) -- rs - removed l_contact_date
+	ifnull(contact_date, timestamp(parse_date('%d/%m/%Y','01/01/9999'))),
 	ifnull(task_created_date, timestamp(parse_date('%d/%m/%Y','01/01/9999'))) ) as task_created_date, approved_application_date, session_start_date, original_intended_start_date,
 	prospect_status, location_code, modality_type, program_group_code, dialer_touched_ind, asc_touched, group_flag, drips_state from
 
 -- Assign the tasks to the appropriate prospect/inquiry; Check whether Activity created date & Contact date if exists are within the 2 inquiries
-(select distinct prospect_id, inquiry_id, opportunity_id, campaign_id, inquiry_scoring_tier, inquiry_created_date, contact_date, l_contact_date, prospect_owner_id,
+(select distinct prospect_id, inquiry_id, opportunity_id, campaign_id, inquiry_scoring_tier, inquiry_created_date, contact_date, 
+		-- l_contact_date, -- rs - removed l_contact_date
+		prospect_owner_id,
 		case when activity_created_date is null then null else task_id end as task_id, case when activity_created_date is null then null else ownerid end as task_owner_id,
 		activity_created_date as task_created_date, approved_application_date, session_start_date, original_intended_start_date, prospect_status, location_code, modality_type,
 		program_group_code, dialer_touched_ind, asc_touched, group_flag, drips_state from
@@ -52,53 +56,62 @@ select *, row_number() over (partition by prospect_id, inquiry_id order by inqui
 -- Identify ACTIVITY_CREATED_DATE & CONTACT_DATE lies between which 2 inquiries
 (select distinct prospect_id, inquiry_id, opportunity_id, task_id, ownerid, campaign_id, inquiry_scoring_tier, inquiry_created_date, next_inquiry_date, approved_application_date, 		  session_start_date, original_intended_start_date
 		,case when activity_created_date is not null and (activity_created_date >= inquiry_created_date ) then activity_created_date else null end as activity_created_date
-		,case when contact_date is not null and (contact_date >= inquiry_created_date ) then contact_date else null end as contact_date
-		,case when l_contact_date is not null and (l_contact_date >= inquiry_created_date ) then l_contact_date else null end as l_contact_date
+		,case when opp_contact_date is not null and (opp_contact_date >= inquiry_created_date ) then opp_contact_date else null end as contact_date
+		--,case when l_contact_date is not null and (l_contact_date >= inquiry_created_date ) then l_contact_date else null end as l_contact_date -- rs - removed l_contact_date
 		,prospect_status, prospect_owner_id, location_code, modality_type, program_group_code, dialer_touched_ind, asc_touched, group_flag, drips_state from (
 
 -- To get all Prospects with valid Inquiries and all related Contacted Tasks linked to Lead Id
 (select * from (select distinct prospect_id, inquiry_id, max(opportunity_id) over (partition by prospect_id) as opportunity_id, task_id, contact_id, ownerid, campaign_id,
 		inquiry_scoring_tier, prospect_created_date, inquiry_created_date, activity_created_date, next_inquiry_date, approved_application_date, session_start_date,
-		original_intended_start_date, ri_contact_date as contact_date, l_contact_date, opp_contact_date, prospect_status, prospect_owner_id, location_code, modality_type,
+		original_intended_start_date, 
+    -- ri_contact_date as contact_date,  -- rs - unique prospect view code is updated to get only one contact date
+    -- l_contact_date, -- rs - unique prospect view code is updated to get only one contact date
+    opp_contact_date, prospect_status, prospect_owner_id, location_code, modality_type,
 		program_group_code, dialer_touched_ind, asc_touched, missed_appointment, missed_appointment_date_time, appointment_scheduled_time_local_text, subject, assign_opp,
 		'LEAD' as group_flag, drips_state
 from rpt_crm_mart.v_cu_kpi_unique_prospects up
 left join
  -- Get all Contacted Tasks
 contacted_tasks t1 on t1.whoid = up.prospect_id and whoid is not null
-) where coalesce(contact_date, l_contact_date, activity_created_date) is not null  )
+) where coalesce(opp_contact_date, activity_created_date) is not null  )
 
 union all
 
 -- To get all Prospects with valid Inquiries and all related Contacted Tasks linked to Contact Id
 (select * from (select distinct prospect_id, inquiry_id, max(opportunity_id) over (partition by prospect_id) as opportunity_id, task_id, contact_id, ownerid, campaign_id,
 		inquiry_scoring_tier, prospect_created_date, inquiry_created_date, activity_created_date, next_inquiry_date, approved_application_date, session_start_date,
-		original_intended_start_date, ri_contact_date as contact_date, l_contact_date, opp_contact_date, prospect_status, prospect_owner_id, location_code, modality_type,
+		original_intended_start_date, 
+    -- ri_contact_date as contact_date,  -- rs - unique prospect view code is updated to get only one contact date
+    -- l_contact_date,  -- rs - unique prospect view code is updated to get only one contact date
+    opp_contact_date, prospect_status, prospect_owner_id, location_code, modality_type,
 		program_group_code, dialer_touched_ind, asc_touched, missed_appointment, missed_appointment_date_time, appointment_scheduled_time_local_text, subject, assign_opp, 'CONTACT' AS GROUP_FLAG, drips_state
 FROM rpt_crm_mart.v_cu_kpi_unique_prospects UP
 left join
  -- Get all Contacted Tasks
 contacted_tasks t2 on t2.whoid = up.contact_id and whoid is not null
-) where coalesce(contact_date, l_contact_date, activity_created_date) is not null )
+) where coalesce(opp_contact_date, activity_created_date) is not null )
 
 union all
 
 -- To get all prospects with valid Inquiries and all related Contacted Tasks linked to Opportunity Id /Account Id
 (select * from (select distinct prospect_id, inquiry_id, max(opportunity_id) over (partition by prospect_id) as opportunity_id, task_id, contact_id, ownerid, campaign_id,
 		inquiry_scoring_tier, prospect_created_date, inquiry_created_date, activity_created_date, next_inquiry_date, approved_application_date, session_start_date,
-		original_intended_start_date, max(opp_contact_date) over (partition by prospect_id) as contact_date, l_contact_date, opp_contact_date, prospect_status, prospect_owner_id,
+		original_intended_start_date, 
+    -- max(opp_contact_date) over (partition by prospect_id) as contact_date,  -- rs - unique prospect view code is updated to get only one contact date
+    -- l_contact_date,   -- rs - unique prospect view code is updated to get only one contact date
+    opp_contact_date, prospect_status, prospect_owner_id,
 		location_code, modality_type, opp_program_group_code as program_group_code, dialer_touched_ind, asc_touched, missed_appointment, missed_appointment_date_time,
 		appointment_scheduled_time_local_text, subject, assign_opp, 'ACCOUNT' as group_flag, drips_state
 from rpt_crm_mart.v_cu_kpi_unique_prospects up
 left join
  -- Get all Contacted Tasks
 contacted_tasks t3 on t3.whatid = up.opportunity_id and whatid is not null
-) where assign_opp=1 and coalesce(contact_date, l_contact_date, activity_created_date) is not null
+) where assign_opp=1 and coalesce(opp_contact_date, activity_created_date) is not null
 )
 
 
 ))
-) where coalesce(contact_date, l_contact_date, task_created_date) is not null
+) where coalesce(contact_date, task_created_date) is not null
 ) ) where select_flag=1  )
 
 where inquiry_task_rank=1
