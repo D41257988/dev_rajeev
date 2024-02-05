@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_application_maturity as
 SELECT
   'CU' AS institution,
   2 AS institution_id,
