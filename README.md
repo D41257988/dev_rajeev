@@ -61,6 +61,6 @@
 	29. trans_crm_mart.sp_wldn_total_student_report
 	30. tds_analytics_partner_portal.usp_prc_dataload_wireframe
 	31. tds_analytics_partner_portal.usp_prc_dataload_wireframe_manual_load
-  32. tds_analytics_partner_portal.usp_prc_dataload_wu
+  	32. tds_analytics_partner_portal.usp_prc_dataload_wu
 
 
