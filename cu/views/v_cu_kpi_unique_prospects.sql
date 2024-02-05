@@ -9,7 +9,10 @@ select distinct prospect_id, contact_id,
     prospect_owner_id, prospect_status, inquiry_scoring_tier,
 		response_score, hdyhau, attendance_preference, prospect_type, address_country_inquiry, address_state_inquiry, address_postal_code_inquiry, location_code, modality_type,
 		program_group_code, opp_program_group_code, program_code, next_inquiry_date, prospect_created_date, opp_create_date, session_start_date, original_intended_start_date,
-		approved_application_date, ri_attempted_contact_date, l_attempted_contact_date, opp_attempted_contact_date, assign_opp, drips_state
+		approved_application_date, 
+    -- ri_attempted_contact_date, -- rs - there is no inquiry attempt_contact_date anymore
+    l_attempted_contact_date, 
+    opp_attempted_contact_date, assign_opp, drips_state
 		from
 (select distinct prospect_id, contact_id, inquiry_id, opportunity_id, 
         -- account_id, 
@@ -19,7 +22,10 @@ select distinct prospect_id, contact_id,
     opp_contact_date, 
     -- l_contact_date, -- rs - no need of contact date from lead. will be taken from Oppo
 		prospect_owner_id, prospect_status, inquiry_scoring_tier, response_score, hdyhau, attendance_preference, prospect_type, address_country_inquiry, address_state_inquiry,
-		address_postal_code_inquiry, location_code, modality_type, program_group_code, opp_program_group_code, next_inquiry_date, prospect_created_date, program_code, opp_create_date, ri_attempted_contact_date, l_attempted_contact_date, opp_attempted_contact_date,
+		address_postal_code_inquiry, location_code, modality_type, program_group_code, opp_program_group_code, next_inquiry_date, prospect_created_date, program_code, opp_create_date, 
+    -- ri_attempted_contact_date,  -- rs - there is no inquiry attempt_contact_date anymore
+    l_attempted_contact_date, 
+    opp_attempted_contact_date,
 		case when (min(ifnull(opp_create_date, timestamp(parse_date('%d/%m/%Y','01/01/9999')) )) over (partition by prospect_id) > inquiry_created_date) and
 		(min(ifnull(opp_create_date, timestamp(parse_date('%d/%m/%Y','01/01/9999')) )) over (partition by prospect_id) = opp_create_date) then 1 else 0 end as assign_opp,
         max(session_start_date) over (partition by prospect_id, inquiry_id, inquiry_created_date, location_code, program_group_code) session_start_date,
@@ -39,7 +45,11 @@ select distinct prospect_id, contact_id,
         case when oppt_create_date>inquiry_created_date then oppt_create_date else null end as opp_create_date,
 		case when oppt_create_date between inquiry_created_date and ifnull(next_inquiry_date, timestamp(parse_date('%d/%m/%Y','01/01/9999')) ) then approved_application_date
 			 else null end as approved_application_date,
-		session_start_date, original_intended_start_date, ri_attempted_contact_date, l_attempted_contact_date, opp_attempted_contact_date, drips_state
+		session_start_date, original_intended_start_date, 
+    -- ri_attempted_contact_date,  -- rs - there is no inquiry attempt_contact_date anymore
+    l_attempted_contact_date, 
+    opp_attempted_contact_date, 
+    drips_state
 		from
 (select distinct inquiry_id inquiry_id, lead_id prospect_id,converted_opportunity_id, createddate as inquiry_created_date, campaign_id as campaign_id, 
         --contact_date as ri_contact_date, -- rs - no need of contact date from lead. will be taken from Oppo
@@ -178,7 +188,7 @@ left join
                     THEN 'MSN (NC)'
                 ELSE 'OTHERS'
           END  as opp_program_group_code
-          ,opp.first_ea_outreach_attempt_c as ri_attempted_contact_date -- rs - getting the date from Oppo
+          -- ,opp.first_ea_outreach_attempt_c as ri_attempted_contact_date -- rs - there is no inquiry attempt_contact_date anymore
           ,opp.first_ea_outreach_attempt_c as l_attempted_contact_date -- rs - getting the date from Oppo
           ,opp.drips_state_c as drips_state 
 					
