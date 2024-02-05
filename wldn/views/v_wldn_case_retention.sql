@@ -13,4 +13,4 @@ left join `raw_b2c_sfdc.opportunity` o on c.opportunity_c = o.id -- RS - new con
 where
 c.is_deleted = false
 and c.record_type_id in ('012o00000012ZrkAAE')
-and o.institution_c='a0ko0000002BSH4AAO'
+and  (c.institution_brand_c in ('a0ko0000002BSH4AAO') OR c.institution_code_c = 3.0)
