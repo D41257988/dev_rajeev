@@ -1,4 +1,4 @@
-# dev_rajeev - for testing purposes
+# List of BQ objects for Migration
 
 **List of views Migrating**:-
 	
