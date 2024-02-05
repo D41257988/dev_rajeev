@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_net_prospects_onsite as
 WITH
   writing_period AS (
   SELECT
