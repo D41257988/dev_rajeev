@@ -4,4 +4,4 @@ FROM `raw_b2c_sfdc.case` sc
 inner JOIN `raw_b2c_sfdc.record_type` srt
 on sc.record_type_id = srt.id
 AND srt.developer_name  like '%Recommended_Admit%'
-where institution_brand_c = 'a0ko0000002BSH4AAO'
+where institution_brand_c = 'a0ko0000002BSH4AAO' or institution_code_c = 3.0
