@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_net_prospects_online as
 with writing_period as (
 select upper(d.cu_online_writing_period) as writing_period, min(d.cal_dt) as wp_begin_date, max(d.cal_dt) as wp_end_date from mdm.dim_date
        d where d.cu_online_writing_period is not null group by d.cu_online_writing_period
