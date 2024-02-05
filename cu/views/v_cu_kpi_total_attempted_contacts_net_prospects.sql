@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_total_attempted_contacts_net_prospects as
 with contacted_tasks as
 (
 select
