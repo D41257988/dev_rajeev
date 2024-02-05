@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_written_applications as
 select distinct
 	 opp.id                                                                                        as opportunity_id
     ,opp.owner_id                                                                                as ownerid
