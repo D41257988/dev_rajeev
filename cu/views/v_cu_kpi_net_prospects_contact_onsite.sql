@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_kpi_net_prospects_contact_onsite as
 SELECT
   DISTINCT TRIM(prospect_id) prospect_id,
   TRIM(inquiry_id) inquiry_id,
