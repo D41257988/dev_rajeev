@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE `tds_analytics_partner_portal.sp_prc_dataload_wireframe`()
+CREATE OR REPLACE PROCEDURE `tds_analytics_partner_portal.usp_prc_dataload_wireframe`()
 OPTIONS (strict_mode=false)
 BEGIN
 
