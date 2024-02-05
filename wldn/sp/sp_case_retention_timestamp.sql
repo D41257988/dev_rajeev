@@ -108,7 +108,7 @@ coalesce(case when (su.owner_department = 'Academic Advising') and su.Internatio
  left join  case_timestamps b on b.case_id = c.id and b.new_value = 'Closed'
  left join begincasestatus bcs
   on bcs.case_id = c.id
- left join `raw_b2c_sfdc.v_service_user` su on su.id = c.owner_id
+ left join `rpt_crm_mart.v_wldn_service_user` su on su.id = c.owner_id
  left join `rpt_crm_mart.v_wldn_queue` q on c.owner_id = q.queuesfid
  left join `raw_b2c_sfdc.institution_c` i on c.institution_c = i.id
  where c.record_type_id in ('012o00000012ZrkAAE')
