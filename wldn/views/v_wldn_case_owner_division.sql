@@ -239,4 +239,4 @@ from
 
 where
    c.is_deleted=false
-   and c.institution_brand_c = 'a0ko0000002BSH4AAO'
+   and (c.institution_brand_c = 'a0ko0000002BSH4AAO' or institution_code_c = 3.0)
