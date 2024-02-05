@@ -16,7 +16,8 @@ WITH
     what_id as whatid,
     created_date AS activity_created_date,
     CASE
-      WHEN skill_c LIKE ('RN_%') OR skill_c LIKE ('Grad_%') OR skill_c LIKE ('Pre_%') THEN 1
+      WHEN 'skill_c' LIKE ('RN_%') OR 'skill_c' LIKE ('Grad_%') OR 'skill_c' LIKE ('Pre_%') THEN 1
+      -- WHEN skill_c LIKE ('RN_%') OR skill_c LIKE ('Grad_%') OR skill_c LIKE ('Pre_%') THEN 1 -- rs - once the column available, uncomment this one
     ELSE
     0
   END
@@ -29,9 +30,9 @@ WITH
     and what_id in (select id from raw_b2c_sfdc.opportunity where is_deleted=false AND institution_c in ('a0kDP000008l7bvYAA'))
   )
 
-select
+select 
   t_1.*
-  , sfdc_lead.drips_state_c
+  , sfdc_oppo.drips_state_c
 from (
 SELECT
   DISTINCT prospect_id,
@@ -270,3 +271,5 @@ GROUP BY
 ) as t_1
 left join `raw_b2c_sfdc.lead` as sfdc_lead
 on t_1.prospect_id = sfdc_lead.id and sfdc_lead.is_deleted=false AND (sfdc_lead.institution_c in ('a0kDP000008l7bvYAA') OR sfdc_lead.company in ('Chamberlain')) -- rs - added CU filter
+left join `raw_b2c_sfdc.opportunity` as sfdc_oppo 
+on sfdc_oppo.id = sfdc_lead.converted_opportunity_id  and sfdc_oppo.institution_c in ('a0kDP000008l7bvYAA') and sfdc_oppo.is_deleted = False -- rs - added to get the drips_state_c column
