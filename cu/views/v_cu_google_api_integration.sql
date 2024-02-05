@@ -1,3 +1,4 @@
+create or replace view rpt_crm_mart.v_cu_google_api_integration as
 select distinct
 'CU' as Institution
 ,LEAD.Id as Lead_Id
