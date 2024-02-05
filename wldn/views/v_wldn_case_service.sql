@@ -6,7 +6,7 @@ left join `raw_b2c_sfdc.user` m on upper(u.manager_id) = upper(m.id)
 left join (select distinct id, 	institution_code_c  from `raw_b2c_sfdc.contact` where is_deleted = false) co on c.contact_id = co.id
 where
 c.is_deleted=false
-and lower(co.institution_code_c)='walden'
+and (c.institution_brand_c in ('a0ko0000002BSH4AAO') OR c.institution_code_c = 3.0)
 and record_type_id in
    (
     '012o00000012bKoAAI'
