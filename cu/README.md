@@ -9,4 +9,4 @@
 	7. rpt_crm_mart.v_cu_kpi_net_prospects_onsite
 	8. rpt_crm_mart.v_cu_kpi_total_attempted_contacts_net_prospects
 	9. rpt_crm_mart.v_cu_kpi_unique_prospects
-  10.rpt_crm_mart.v_cu_kpi_written_applications
+ 	10.rpt_crm_mart.v_cu_kpi_written_applications
